@@ -33,7 +33,7 @@ public:
         auto productOnDatabase = database.find(inArticle);
         if (productOnDatabase == database.end())
         {
-            throw std::runtime_error("ARTICLE NOT FOUND");
+            throw std::invalid_argument("article");
         }
         else
         {
