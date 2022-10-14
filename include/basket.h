@@ -4,7 +4,8 @@
 #include <fstream>
 #include <string>
 #include <map>
-#include "throws.h"
+#include <exception>
+
 
 
 class Basket
@@ -32,14 +33,14 @@ public:
         auto productOnDatabase = database.find(inArticle);
         if (productOnDatabase == database.end())
         {
-            throw Error::ARTICLE_NOT_FOUND;
+            throw std::runtime_error("ARTICLE NOT FOUND");
         }
         else
         {
             int amountOnDatabase = productOnDatabase->second;
             if (amountOnDatabase < inAmount)
             {
-                throw Error::NOT_ENOUGH_AMOUNT;
+                throw std::invalid_argument("amount");
             }   
             auto productOnBasket = basket.find(inArticle);
             if (productOnBasket != basket.end())
@@ -48,7 +49,7 @@ public:
 
                 if (amountOnDatabase < amountOnBasket + inAmount)
                 {
-                    throw Error::NOT_ENOUGH_AMOUNT;
+                    throw std::invalid_argument("amount");
                 }
                 else
                 {
@@ -69,13 +70,13 @@ public:
         auto productOnBasket = basket.find(inArticle);
         if (productOnBasket == basket.end())
         {
-            throw Error::ARTICLE_NOT_FOUND;
+            throw std::invalid_argument("article");
         }
             
         int amountProduct = productOnBasket->second;
         if (amountProduct < inAmount)
         {
-            throw Error::NOT_ENOUGH_AMOUNT;
+            throw std::invalid_argument("amount");
         }   
         else
             if (amountProduct == inAmount)
@@ -92,7 +93,7 @@ public:
         auto productOnDatabase = database.find(inArticle);
         if (productOnDatabase == database.end())
         {
-            throw Error::ARTICLE_NOT_FOUND;
+            throw std::runtime_error("ARTICLE NOT FOUND");
         }
         else
         {

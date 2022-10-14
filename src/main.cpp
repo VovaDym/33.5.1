@@ -2,8 +2,8 @@
 #include <map>
 #include <fstream>
 #include <boost/asio.hpp>
+#include <exception>
 #include "basket.h"
-#include "throws.h"
 
 
 
@@ -28,11 +28,10 @@ int main()
         std::cout << "2. Remove product from basket;" << std::endl;
         std::cout << "0. Exit from shop." << std::endl;
 
-        int chosen;
-        std::cin >> chosen;
-
         std::string article = "";
         int amount = 0;
+        int chosen;
+        std::cin >> chosen;
         if (chosen == 1 || chosen == 2)
         {
             std::cout << "Enter product article:";
@@ -44,37 +43,39 @@ int main()
         {
             switch (chosen)
             {
-            case 1: basket.add(article, amount);
-            {
-
-                break;
-            }
-            case 2: basket.remove(article, amount); break;
-            case 0: exit = true;                    break;
-            default: std::cout << "! Incorrect choose. Try again !";
-            }
+               case 1: basket.add(article, amount);
+               {
+                 
+                   break;
+               }
+               case 2: basket.remove(article, amount);
+               {
+                   break;
+               }
+               case 0: exit = true;                   
+               {
+                   break;
+               }   
+               default: throw std::runtime_error("ACTION NOT FOUND");
+            }   
         }
-        catch (Error myErr)
+        catch (std::invalid_argument err)
         {
             boost::asio::io_context io;
             boost::asio::steady_timer t(io, boost::asio::chrono::seconds(5));
+            std::cout << "Invalid argument: " << err.what() << std::endl;
             
-            switch (myErr)
-            {
-            case Error::ARTICLE_NOT_FOUND:
-                
-                std::cerr << "This article doesn't found" << std::endl;
-                
-                t.wait();
-                break;
-
-            case Error::NOT_ENOUGH_AMOUNT:
-                
-                std::cerr << "Not enough amount" << std::endl;
-                
-                t.wait();
-                break;
-            }
+            t.wait();
+            exit = false;
+        }
+        catch (std::runtime_error err)
+        {
+            boost::asio::io_context io;
+            boost::asio::steady_timer t(io, boost::asio::chrono::seconds(5));
+            std::cout << "Runtime_error: " << err.what() << std::endl; 
+            
+            t.wait();
+            exit = false;
         }
     }
 }
